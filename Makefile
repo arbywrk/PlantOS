@@ -1,36 +1,20 @@
+C=gcc
 ASM=nasm
+LINK=ld
 
 SRC_DIR=src
 BUILD_DIR=build
 
-.PHONY: all floppy_image kernel bootlodaer clean always
-
-#
-# Floppy image
-#
-floppy_image: $(BUILD_DIR)/main_floppy.img
-
-$(BUILD_DIR)/main_floppy.img: bootloader kernel
-	dd if=/dev/zero of=$(BUILD_DIR)/main_floppy.img bs=512 count=2880
-	mkfs.fat -F 12 -n "NBOS" $(BUILD_DIR)/main_floppy.img
-	dd if=$(BUILD_DIR)/bootloader.bin of=$(BUILD_DIR)/main_floppy.img conv=notrunc
-	# cp $(BUILD_DIR)/main.bin $(BUILD_DIR)/main_floppy.img # ?
-	truncate -s 1440k $(BUILD_DIR)/main_floppy.img
-	mcopy -i $(BUILD_DIR)/main_floppy.img $(BUILD_DIR)/kernel.bin "::kernel.bin"
-
-#
-# Bootloader
-#
-bootloader: $(BUILD_DIR)/bootloader.bin
-$(BUILD_DIR)/bootloader.bin: always
-	$(ASM) $(SRC_DIR)/bootloader/boot.asm -f bin -o $(BUILD_DIR)/bootloader.bin
+.PHONY: all kernel clean always
 
 # 
 # Kernel
 #
-kernel: $(BUILD_DIR)/kernel.bin
-$(BUILD_DIR)/kernel.bin: always
-	$(ASM) $(SRC_DIR)/kernel/main.asm -f bin -o $(BUILD_DIR)/kernel.bin
+kernel: $(BUILD_DIR)/kasm.o $(BUILD_DIR)/kc.o
+$(BUILD_DIR)/kasm.o: always
+	$(ASM) $(SRC_DIR)/kernel.asm -f elf32 -o $(BUILD_DIR)/kasm.o
+	$(C) -m32 -ffreestanding -fno-stack-protector -nostdlib -c $(SRC_DIR)/kmain.c -o $(BUILD_DIR)/kc.o
+	$(LINK) -m elf_i386 -T $(SRC_DIR)/link.ld -o $(BUILD_DIR)/kernel-0 $(BUILD_DIR)/kasm.o $(BUILD_DIR)/kc.o
 
 # 
 # Always

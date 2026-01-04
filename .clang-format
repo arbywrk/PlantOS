@@ -1,73 +1,59 @@
 BasedOnStyle: LLVM
 Language: C
 
+# Line length
+ColumnLimit: 100
+
 # Indentation
 IndentWidth: 8
 ContinuationIndentWidth: 8
-UseTab: Always
 TabWidth: 8
+UseTab: Never
+
+# Pointer alignment
+PointerAlignment: Right
+DerivePointerAlignment: false
 
 # Braces
-BreakBeforeBraces: Linux
-BraceWrapping:
-  AfterFunction: true
-  AfterControlStatement: false
-  AfterEnum: true
-  AfterStruct: true
-  AfterUnion: true
-  AfterExternBlock: true
-  BeforeElse: false
-  SplitEmptyFunction: false
-  SplitEmptyRecord: false
-  SplitEmptyNamespace: false
+BreakBeforeBraces: Attach
+
+# Function parameters & arguments
+BinPackParameters: false
+BinPackArguments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
+
+# This combination forces:
+# - one parameter per line when broken
+# - closing ')' on its own line
+AlignAfterOpenBracket: DontAlign
 
 # Function formatting
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 
-# Control statements
+# Spacing
 SpaceBeforeParens: ControlStatements
 SpacesInParentheses: false
-SpaceAfterCStyleCast: false
+SpaceAfterCStyleCast: true
 
 # Alignment
-AlignAfterOpenBracket: DontAlign
 AlignOperands: false
 AlignTrailingComments: false
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
-
-# Line breaking
-ColumnLimit: 100
-BreakBeforeBinaryOperators: None
-BreakBeforeTernaryOperators: true
-BreakStringLiterals: false
-
-# Pointer style
-PointerAlignment: Left
-DerivePointerAlignment: false
 
 # Includes
 SortIncludes: false
 IncludeBlocks: Preserve
 
 # Comments
-ReflowComments: false
-CommentPragmas: '^ IWYU pragma:'
-
-# Whitespace
-SpaceBeforeAssignmentOperators: true
-SpacesInAngles: false
-SpacesInContainerLiterals: false
-SpacesInConditionalStatement: false
-
-# Case labels
-IndentCaseLabels: false
+ReflowComments: true
 
 # Preprocessor
-IndentPPDirectives: None
+IndentPPDirectives: AfterHash
 
 # Misc
-KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false

@@ -1,95 +1,105 @@
-# Makefile for RISC-V Bare Metal Kernel
-#
-# Builds a minimal RISC-V kernel for QEMU virt machine.
-#
-# Documentation:
-# - GNU Make Manual: https://www.gnu.org/software/make/manual/
-# - RISC-V Toolchain: https://github.com/riscv/riscv-gnu-toolchain
+include config.mk
 
-# Toolchain configuration
-PREFIX = riscv32-unknown-elf-
-CC = $(PREFIX)gcc
-AS = $(PREFIX)as
-OBJCOPY = $(PREFIX)objcopy
+KERNEL_SRC_ROOT   := src/kernel
+BUILD_DIR  := build
+ARCH       := riscv
 
-# Architecture: RV32IMAC + Zicsr
-# - RV32I: Base 32-bit integer ISA
-# - M: Integer multiply/divide
-# - A: Atomic instructions
-# - C: Compressed instructions (16-bit)
-# - Zicsr: CSR (Control and Status Register) instructions
-# Reference: RISC-V ISA Manual
-ARCH = rv32imac_zicsr
-ABI = ilp32
+ELF        := $(BUILD_DIR)/kernel.elf
+LINKER     := $(KERNEL_SRC_ROOT)/arch/$(ARCH)/qemu_virt.ld
 
-# Compiler flags
-# -march: Target architecture
-# -mabi: Application Binary Interface (integer, long, pointer = 32-bit)
-# -ffreestanding: No standard library or hosted environment
-# -nostdlib: Don't link with standard library
-# -O2: Optimize for size and speed
-CFLAGS = -march=$(ARCH) -mabi=$(ABI) -ffreestanding -nostdlib -O2 -Wall -Wextra
+INCLUDES += \
+	-I$(KERNEL_SRC_ROOT)/include \
+	-I$(KERNEL_SRC_ROOT)/arch/$(ARCH)/include
 
-# Assembler flags
-ASFLAGS = -march=$(ARCH) -mabi=$(ABI)
+ARCH_ASM_SRCS := \
+	$(KERNEL_SRC_ROOT)/arch/$(ARCH)/boot/entry.S
 
-# Paths
-SRC_DIR = src/kernel
-BUILD_DIR = build
-LINKER_SCRIPT = src/qemu_virt.ld
+ARCH_C_SRCS := \
+	$(KERNEL_SRC_ROOT)/arch/$(ARCH)/boot/start.c
 
-# Source files
-ASM_SRC = $(SRC_DIR)/kernel.S
-C_SRC = $(SRC_DIR)/kernel.c
+CONSOLE_C_SRCS := \
+	$(KERNEL_SRC_ROOT)/console/console.c
 
-# Object files (in build directory)
-ASM_OBJ = $(BUILD_DIR)/kernel_asm.o
-C_OBJ = $(BUILD_DIR)/kernel.o
+CORE_C_SRCS := \
+	$(KERNEL_SRC_ROOT)/core/kmain.c \
+	$(KERNEL_SRC_ROOT)/core/kprintf.c \
+	$(KERNEL_SRC_ROOT)/core/panic.c
 
-# Output
-ELF = $(BUILD_DIR)/kernel.elf
+UART_C_SRCS := \
+	$(KERNEL_SRC_ROOT)/drivers/uart/sifive.c
 
-# QEMU configuration
-QEMU = qemu-system-riscv32
-QEMU_MACHINE = virt
-QEMU_FLAGS = -machine $(QEMU_MACHINE) -bios none -kernel $(ELF) -nographic -serial mon:stdio
+LIB_ASM_SRCS := \
+	$(KERNEL_SRC_ROOT)/lib/memset.S
 
-# Default target
+LIB_C_SRCS := \
+	$(KERNEL_SRC_ROOT)/lib/string.c
+
+C_SRCS := \
+	$(ARCH_C_SRCS) \
+	$(CONSOLE_C_SRCS) \
+	$(CORE_C_SRCS) \
+	$(UART_C_SRCS) \
+	$(LIB_C_SRCS)
+
+ASM_SRCS := \
+	$(ARCH_ASM_SRCS) \
+	$(LIB_ASM_SRCS)
+
+OBJS := \
+	$(C_SRCS:$(KERNEL_SRC_ROOT)/%.c=$(BUILD_DIR)/%.o) \
+	$(ASM_SRCS:$(KERNEL_SRC_ROOT)/%.S=$(BUILD_DIR)/%.o)
+
+# --------------------------
+# Build type
+# --------------------------
+# Usage: make MODE=debug
+MODE ?= debug
+
+ifeq ($(MODE),debug)
+	CFLAGS_MODE := -g -O0
+else
+	CFLAGS_MODE := -O2
+endif
+
+# Combine common flags with mode flags
+CFLAGS := $(COMMON_CFLAGS) $(CFLAGS_MODE)
+ASFLAGS := $(COMMON_ASFLAGS) $(CFLAGS_MODE)
+
+# --------------------------
+# Targets
+# --------------------------
+.PHONY: all
 all: $(ELF)
 
-# Create build directory
-$(BUILD_DIR):
-	@mkdir -p $(BUILD_DIR)
+# Link kernel
+$(ELF): $(OBJS)
+	@echo "  LD  $@"
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -nostartfiles -T $(LINKER) $^ -o $@
 
-# Link kernel ELF
-# Note: Assembly object must come first so _start is at entry point
-$(ELF): $(ASM_OBJ) $(C_OBJ) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -nostartfiles -T $(LINKER_SCRIPT) $(ASM_OBJ) $(C_OBJ) -o $@
-	@echo "Linked $@"
+# Compile C sources
+$(BUILD_DIR)/%.o: $(KERNEL_SRC_ROOT)/%.c
+	@echo "  CC  $<"
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# Compile C source
-$(C_OBJ): $(C_SRC) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-	@echo "Compiled $<"
+# Compile assembly sources (.S) with GCC + debug info if debug
+$(BUILD_DIR)/%.o: $(KERNEL_SRC_ROOT)/%.S
+	@echo "  AS  $<"
+	@mkdir -p $(dir $@)
+	$(CC) $(ASFLAGS) $(INCLUDES) -c $< -o $@
 
-# Assemble assembly source
-$(ASM_OBJ): $(ASM_SRC) | $(BUILD_DIR)
-	$(AS) $(ASFLAGS) $< -o $@
-	@echo "Assembled $<"
-
-# Run in QEMU
-# Exit: Ctrl-A then X
+# --------------------------
+# Run / Debug
+# --------------------------
+.PHONY: run
 run: $(ELF)
-	@echo "Starting QEMU (exit: Ctrl-A then X)..."
-	@$(QEMU) $(QEMU_FLAGS)
+	@qemu-system-riscv32 -machine virt -bios none -kernel $(ELF) -nographic
 
-# Debug with detailed logging
+.PHONY: debug
 debug: $(ELF)
-	@$(QEMU) $(QEMU_FLAGS) -D qemu.log -d in_asm,int,cpu_reset
+	qemu-system-riscv32 -machine virt -bios none -kernel $(ELF) -nographic -S -gdb tcp::1234
 
-# Clean build artifacts
+.PHONY: clean
 clean:
-	@rm -rf $(BUILD_DIR)
-	@echo "Cleaned"
-
-.PHONY: all run debug clean
+	rm -rf $(BUILD_DIR)

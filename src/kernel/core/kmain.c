@@ -1,5 +1,6 @@
 #include "../console/console.h"
 #include "../include/kernel/kernel.h"
+#include "../include/kernel/types.h"
 
 /* kernel_main - Main kernel function
  *
@@ -17,10 +18,6 @@ void kmain(void) {
         // mm_init();
         // trap_enable();
         // timer_init();
-
-        /* Interrupts are enabled by _start before calling kmain
-         * (via mstatus.MIE and mie.MEIE CSR bits)
-         */
 
         // sched_init();
         // sched_start(); // hands control to schedular (interrupts + schedular run the system)

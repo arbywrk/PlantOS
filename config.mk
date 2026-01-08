@@ -10,6 +10,7 @@ ARCH_ABI := ilp32
 COMMON_CFLAGS := \
 	-march=$(ARCH_ISA) \
 	-mabi=$(ARCH_ABI) \
+	-mcmodel=medany \
 	-ffreestanding \
 	-fno-builtin \
 	-fno-stack-protector \

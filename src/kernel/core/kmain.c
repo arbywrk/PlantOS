@@ -14,6 +14,9 @@
 void kmain(void) {
         console_init();
         kprintf("RamOS Kernel booting...\n");
+        kprintf("Testing printing int: %i\n", 101010);
+        kprintf("Testing printing hex: %i\n", 1022);
+        kprintf("Testing printing %%\n");
 
         // mm_init();
         // trap_enable();

@@ -1,6 +1,6 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
-void kprintf(const char *);
+int kprintf(const char *str, ...);
 
 #endif // KERNEL_H

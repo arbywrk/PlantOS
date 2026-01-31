@@ -1,5 +1,9 @@
+/*
+ * uart.c - Minimal 16550 UART driver for QEMU virt.
+ */
+
 #include "uart.h"
-#include "../../arch/riscv/include/arch/io.h"
+#include <arch/io.h>
 #include "../../console/console.h"
 
 #define UART_BASE 0x10000000UL

@@ -1,3 +1,7 @@
+/*
+ * kstdarg.h - Minimal stdarg wrapper for freestanding builds.
+ */
+
 #ifndef KSTDARG_H
 #define KSTDARG_H
 

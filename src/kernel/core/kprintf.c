@@ -1,3 +1,7 @@
+/*
+ * kprintf.c - Tiny printf-style formatter for early logging.
+ */
+
 #include "../include/kernel/types.h"
 #include "../include/kernel/kernel.h"
 #include "../console/console.h"

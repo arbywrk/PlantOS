@@ -1,3 +1,7 @@
+/*
+ * kmain.c - Kernel entry point after early boot handoff.
+ */
+
 #include "../console/console.h"
 #include "../include/kernel/kernel.h"
 #include "../include/kernel/types.h"
@@ -12,6 +16,7 @@
  * Reference: RISC-V Calling Convention - caller expects sp/ra preserved
  */
 void kmain(void) {
+        // TODO: switch to 64 bits
         console_init();
         kprintf("RamOS Kernel booting...\n");
         kprintf("Testing printing int: %i\n", 101010);

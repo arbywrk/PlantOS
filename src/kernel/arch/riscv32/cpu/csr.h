@@ -1,7 +1,11 @@
-#ifndef RISCV_H
-#define RISCV_H
+/*
+ * csr.h - CSR access helpers for RV32 CPU code.
+ */
 
-#include "../../../../include/kernel/types.h"
+#ifndef CSR_H
+#define CSR_H
+
+#include <kernel/types.h>
 
 /*
 * Machine Previous Privilege
@@ -20,48 +24,48 @@
 #define SIE_SEIE (1L << 9)
 
 // mstatus -> controls privilage transitions, interupts, FP state
-static inline uint64 read_mstatus() {
-    uint64 mstatus;
+static inline reg_t read_mstatus() {
+    reg_t mstatus;
     asm volatile("csrr %0, mstatus" : "=r" (mstatus));
     return mstatus;
 }
 
-static inline void write_mstatus(uint64 mstatus) {
+static inline void write_mstatus(reg_t mstatus) {
     asm volatile("csrw mstatus, %0" : : "r" (mstatus));
 }
 
-static inline void write_mepc(uint64 mepc) {
+static inline void write_mepc(reg_t mepc) {
     asm volatile("csrw mepc, %0" : : "r" (mepc));
 }
 
-static inline void write_satp(uint64 satp) {
+static inline void write_satp(reg_t satp) {
     asm volatile("csrw satp, %0" : : "r" (satp));
 }
 
-static inline void write_medeleg(uint64 medeleg) {
+static inline void write_medeleg(reg_t medeleg) {
     asm volatile("csrw medeleg, %0" : : "r" (medeleg));
 }
 
-static inline void write_mideleg(uint64 mideleg) {
+static inline void write_mideleg(reg_t mideleg) {
     asm volatile("csrw mideleg, %0" : : "r" (mideleg));
 }
 
-static inline uint64 read_sie() {
-    uint64 sie;
+static inline reg_t read_sie() {
+    reg_t sie;
     asm volatile("csrr %0, sie" : "=r" (sie));
     return sie;
 }
 
-static inline void write_sie(uint64 sie) {
+static inline void write_sie(reg_t sie) {
     asm volatile("csrw sie, %0" : : "r" (sie));
 }
 
-static inline void write_pmpaddr0(uint64 pmpaddr0) {
+static inline void write_pmpaddr0(reg_t pmpaddr0) {
     asm volatile("csrw pmpaddr0, %0" : : "r" (pmpaddr0));
 }
 
-static inline void write_pmpcfg0(uint64 pmpcfg0) {
+static inline void write_pmpcfg0(reg_t pmpcfg0) {
     asm volatile("csrw pmpcfg0, %0" : : "r" (pmpcfg0));
 }
 
-#endif // RISCV_H
+#endif // CSR_H 

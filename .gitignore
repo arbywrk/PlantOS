@@ -1,2 +1,4 @@
+.idea/
 build/
 old/
+compile_commands.json

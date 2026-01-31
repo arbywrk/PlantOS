@@ -1,3 +1,7 @@
+/*
+ * uart.h - Internal UART driver interface used by the console.
+ */
+
 #ifndef UART_H
 #define UART_H
 

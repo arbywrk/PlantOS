@@ -1,3 +1,7 @@
+/*
+ * console.h - Minimal console abstraction for early kernel output.
+ */
+
 #ifndef CONSOLE_H
 #define CONSOLE_H
 

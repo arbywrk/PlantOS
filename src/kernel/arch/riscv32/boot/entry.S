@@ -1,3 +1,5 @@
+# entry.S - Reset entry, sets up a stack, and jumps to C start().
+#
 # credit to xv6 (riscv version) they where a big help
 # https://github.com/mit-pdos/xv6-riscv
 
@@ -15,7 +17,7 @@ _entry:
   # with a 4096-byte stack per CPU.
   # sp = stack0 + ((hartid + 1) * 4096)
   la sp, stack0    # sp = &stack0
-  li a0, 4096      # a0 = 4906
+  li a0, 4096      # a0 = 4096
   csrr a1, mhartid # a1 = mhartid
   addi a1, a1, 1   # a1 = a1 + 1
   mul a0, a0, a1   # a0 = a0 * a1

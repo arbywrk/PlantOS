@@ -1,6 +1,10 @@
-#include "../include/arch/param.h"
-#include "../include/arch/riscv.h"
-#include "../../../include/kernel/types.h"
+/*
+ * start.c - Early boot code: set up CSRs and drop into kmain().
+ */
+
+#include <arch/param.h>
+#include <arch/riscv.h>
+#include <kernel/types.h>
 
 void kmain();
 
@@ -22,16 +26,16 @@ void start(void) {
          * so set mepc to kmain
          * requires gcc -mcmodel=medany
          */
-        write_mepc((uint64)kmain);
+        write_mepc((reg_t) kmain);
 
         /**
          * pagin = hardware virtual memory translation
-         * If enabled, the hart will will translate 
+         * If enabled, the hart will will translate
          * addresses page tables.
          * Because page tables don't exist at this point
          * disable paging for now.
          * S-mode uses the satp register
-         * (Supervisor Address Translation and Protection) 
+         * (Supervisor Address Translation and Protection)
          * to control the virtual memory paging system.
          * To disable paging set satp to 0;
          */
@@ -54,7 +58,7 @@ void start(void) {
         /**
          * Enable S-mode Timer Interrupts (STI) and External Interrupts (SEI).
          * sie -> Supervisor Interrupt Enable register
-         *     -> Mask register that controls which interrupt types 
+         *     -> Mask register that controls which interrupt types
          *        are allowed if interrupts are enabled.
          * Setting the bits of sie only allows the specific types of interrupts
          * to happen, but does not enable them (a.k.a. does not activate interrupts)
@@ -94,7 +98,7 @@ void start(void) {
          *   physical memory, which is required for the kernel to run
          *   after dropping from M-mode to S-mode.
          */
-        write_pmpaddr0(0x3fffffffffffffull);
+        write_pmpaddr0(0x3ffffffful);
         write_pmpcfg0(0x0f);
 
         asm volatile("mret");

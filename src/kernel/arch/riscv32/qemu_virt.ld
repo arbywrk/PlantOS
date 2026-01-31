@@ -1,3 +1,5 @@
+/* qemu_virt.ld - Linker script for QEMU virt memory layout (RV32). */
+
 OUTPUT_ARCH(riscv)
 ENTRY(_entry)
 

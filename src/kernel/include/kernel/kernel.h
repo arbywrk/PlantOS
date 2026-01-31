@@ -1,3 +1,7 @@
+/*
+ * kernel.h - Public kernel APIs (kprintf and friends).
+ */
+
 #ifndef KERNEL_H
 #define KERNEL_H
 

@@ -1,3 +1,7 @@
+/*
+ * console.c - Console routing to the active backend (UART).
+ */
+
 #include "console.h"
 #include "../drivers/uart/uart.h"
 

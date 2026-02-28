@@ -17,11 +17,14 @@ Build a lean, dependable OS for a mini greenhouse controller, with predictable t
 - CMake 3.20+
 - RISC-V GCC toolchain in PATH (`riscv32-unknown-elf-*`)
 - (Optional) QEMU for RISC-V if you want to emulate the target
+- (Optional) Just
 
 ### Configure and build
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
+# or if you have just installed as well
+just build
 ```
 
 Build output:
@@ -30,6 +33,9 @@ Build output:
 ### Optional: run in QEMU
 ```bash
 qemu-system-riscv32 -machine virt -bios none -kernel build/kernel.elf -nographic
+# or if you have just installed as well
+just run
+# to exit qemu: Ctr+A Z 
 ```
 
 If you are targeting a specific dev board, you will need to adjust the linker script and board-specific bring-up to match its memory map and peripherals.
@@ -53,7 +59,7 @@ cmake -S . -B build -DARCH_ISA=rv32imac -DARCH_ABI=ilp32
 - `src/kernel/lib` - low-level helpers (placeholder)
 - `cmake` - CMake tooling
 
-## Roadmap (high level)
+## Roadmap
 - Solidify board bring-up: clocks, memory map, interrupt controller
 - Expand hardware drivers: GPIO, timers, I2C/SPI, ADC
 - Basic scheduler + timekeeping

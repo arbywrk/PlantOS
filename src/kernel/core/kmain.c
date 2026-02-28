@@ -16,13 +16,17 @@
  * Reference: RISC-V Calling Convention - caller expects sp/ra preserved
  */
 void kmain(void) {
-        // TODO: switch to 64 bits
         console_init();
-        kprintf("RamOS Kernel booting...\n");
-        kprintf("Testing printing int: %i\n", 101010);
-        kprintf("Testing printing hex: %i\n", 1022);
-        kprintf("Testing printing %%\n");
+        kprintf("  /$$$$$$$  /$$                       /$$      /$$$$$$          \n");
+        kprintf("| $$__  $$| $$                      | $$     /$$__  $$          \n");
+        kprintf("| $$  \\ $$| $$  /$$$$$$  /$$$$$$$  /$$$$$$  | $$  \\ $$  /$$$$$$$\n");
+        kprintf("| $$$$$$$/| $$ |____  $$| $$__  $$|_  $$_/  | $$  | $$ /$$_____/\n");
+        kprintf("| $$____/ | $$  /$$$$$$$| $$  \\ $$  | $$    | $$  | $$|  $$$$$$ \n");
+        kprintf("| $$      | $$ /$$__  $$| $$  | $$  | $$ /$$| $$  | $$ \\____  $$\n");
+        kprintf("| $$      | $$|  $$$$$$$| $$  | $$  |  $$$$/|  $$$$$$/ /$$$$$$$/\n");
+        kprintf("|__/      |__/ \\_______/|__/  |__/   \\___/   \\______/ |_______/\n");
 
+        kprintf("Kernel booting...\n");
         // mm_init();
         // trap_enable();
         // timer_init();

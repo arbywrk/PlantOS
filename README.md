@@ -1,4 +1,13 @@
-# PlantOS
+```
+ /$$$$$$$  /$$                       /$$      /$$$$$$          
+| $$__  $$| $$                      | $$     /$$__  $$          
+| $$  \ $$| $$  /$$$$$$  /$$$$$$$  /$$$$$$  | $$  \ $$  /$$$$$$$
+| $$$$$$$/| $$ |____  $$| $$__  $$|_  $$_/  | $$  | $$ /$$_____/
+| $$____/ | $$  /$$$$$$$| $$  \ $$  | $$    | $$  | $$|  $$$$$$
+| $$      | $$ /$$__  $$| $$  | $$  | $$ /$$| $$  | $$ \____  $$
+| $$      | $$|  $$$$$$$| $$  | $$  |  $$$$/|  $$$$$$/ /$$$$$$$/
+|__/      |__/ \_______/|__/  |__/   \___/   \______/ |_______/
+```
 PlantOS is a small, bare-metal RISC-V OS in early development. The long-term goal is to run on a greenhouse controller dev board and provide the minimal, reliable services needed to read sensors, drive actuators, and keep a small environment stable.
 
 This project is currently a work in progress and focuses on core bring-up and foundational kernel pieces.

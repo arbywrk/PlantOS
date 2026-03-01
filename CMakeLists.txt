@@ -66,16 +66,3 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Add kernel subdirectory
 add_subdirectory(src/kernel)
-
-# Custom targets for running and debugging
-# add_custom_target(run
-#     COMMAND qemu-system-riscv32 -machine virt -bios none -kernel $<TARGET_FILE:kernel.elf> -nographic
-#     DEPENDS kernel.elf
-#     COMMENT "Running kernel in QEMU"
-# )
-#
-# add_custom_target(debug-qemu
-#     COMMAND qemu-system-riscv32 -machine virt -bios none -kernel $<TARGET_FILE:kernel.elf> -nographic -S -gdb tcp::1234
-#     DEPENDS kernel.elf
-#     COMMENT "Starting QEMU in debug mode (waiting for GDB on port 1234)"
-# )

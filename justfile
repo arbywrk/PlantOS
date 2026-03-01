@@ -11,4 +11,5 @@ clean:
 
 # run the kernel in qemu-system-riscv32 vm
 run: build
+    @echo "Starting the kernel..."
     @qemu-system-riscv32 -machine virt -bios none -kernel build/kernel.elf -nographic

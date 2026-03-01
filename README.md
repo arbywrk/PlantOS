@@ -10,7 +10,6 @@ Build a lean, dependable OS for a mini greenhouse controller, with predictable t
 - 32-bit RISC-V boot + basic kernel entry
 - UART console + `kprintf` for early logging
 - Machine-mode trap/interrupt path for `qemu-virt`
-- `qemu-virt` is the only active target for now
 
 ## Build
 ### Prerequisites
@@ -60,11 +59,3 @@ cmake -S . -B build -DARCH_ISA=rv32imac -DARCH_ABI=ilp32
 - `src/kernel/drivers` - device drivers (currently UART)
 - `src/kernel/lib` - low-level helpers (placeholder)
 - `cmake` - CMake tooling
-
-## Roadmap
-- Solidify board bring-up: clocks, memory map, interrupt controller
-- Expand hardware drivers: GPIO, timers, I2C/SPI, ADC
-- Basic scheduler + timekeeping
-- Simple device abstraction layer for sensors/actuators
-- Data logging + configuration storage
-- Communications interface for telemetry and control

@@ -11,25 +11,51 @@ set(ARCH_ASM_SRCS
         arch/${ARCH}/cpu/trap.S
 )
 
-set(ARCH_C_SRCS
-        arch/${ARCH}/boards/${BOARD}/boot/start.c
+set(ARCH_HDRS
+        arch/${ARCH}/boards/${BOARD}/${BOARD}.ld
         arch/${ARCH}/cpu/csr.h
         arch/${ARCH}/cpu/trap.h
-        arch/${ARCH}/cpu/trap.c
         arch/${ARCH}/cpu/interrupt.h
-        arch/${ARCH}/cpu/interrupt.c
         arch/${ARCH}/cpu/timer.h
+        arch/${ARCH}/include/arch/io.h
+        arch/${ARCH}/include/arch/param.h
+        arch/${ARCH}/include/arch/riscv.h
+        arch/${ARCH}/include/arch/platform/interrupt.h
+        arch/${ARCH}/include/arch/platform/timer.h
+        arch/${ARCH}/include/arch/platform/uart.h
+)
+
+set(ARCH_C_SRCS
+        arch/${ARCH}/boards/${BOARD}/boot/start.c
+        arch/${ARCH}/cpu/trap.c
+        arch/${ARCH}/cpu/interrupt.c
         arch/${ARCH}/cpu/timer.c
+)
+
+set(CONSOLE_HDRS
+        console/console.h
 )
 
 set(CONSOLE_C_SRCS
         console/console.c
 )
 
+set(CORE_HDRS
+        include/kernel/kernel.h
+        include/kernel/panic.h
+        include/kernel/types.h
+        lib/kstdarg.h
+)
+
 set(CORE_C_SRCS
         core/kmain.c
         core/kprintf.c
         core/panic.c
+)
+
+set(UART_HDRS
+        drivers/uart/uart.h
+        include/drivers/uart.h
 )
 
 set(UART_C_SRCS
@@ -47,9 +73,13 @@ set(LIB_C_SRCS
 # Combine all sources
 set(ALL_SOURCES
         ${ARCH_ASM_SRCS}
+        ${ARCH_HDRS}
         ${ARCH_C_SRCS}
+        ${CONSOLE_HDRS}
         ${CONSOLE_C_SRCS}
+        ${CORE_HDRS}
         ${CORE_C_SRCS}
+        ${UART_HDRS}
         ${UART_C_SRCS}
         ${LIB_ASM_SRCS}
         ${LIB_C_SRCS}

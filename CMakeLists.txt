@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 # Architecture configuration
 set(ARCH "riscv32" CACHE STRING "Target architecture")
-set(ARCH_ISA "rv32imac_zicsr" CACHE STRING "RISC-V ISA string")
+set(BOARD "qemu-virt" CACHE STRING "Target board")
+set(ARCH_ISA "rv32imac_zicsr_zifencei" CACHE STRING "RISC-V ISA string")
 set(ARCH_ABI "ilp32" CACHE STRING "RISC-V ABI string")
 
 # Toolchain configuration
@@ -57,6 +58,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/kernel/include
     ${CMAKE_SOURCE_DIR}/src/kernel/arch/${ARCH}/include
     ${CMAKE_SOURCE_DIR}/src/kernel/arch/${ARCH}
+    ${CMAKE_SOURCE_DIR}/src/kernel/arch/${ARCH}/boards/${BOARD}/include
 )
 
 # Build directory

@@ -9,8 +9,8 @@ Build a lean, dependable OS for a mini greenhouse controller, with predictable t
 ## Current Status (WIP)
 - 32-bit RISC-V boot + basic kernel entry
 - UART console + `kprintf` for early logging
-- Early trap/interrupt handling code (not fully wired in yet)
-- Linker script targeting QEMU virt by default
+- Machine-mode trap/interrupt path for `qemu-virt`
+- `qemu-virt` is the only active target for now
 
 ## Build
 ### Prerequisites
@@ -21,7 +21,7 @@ Build a lean, dependable OS for a mini greenhouse controller, with predictable t
 
 ### Configure and build
 ```bash
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBOARD=qemu-virt
 cmake --build build
 # or if you have just installed as well
 just build
@@ -38,7 +38,9 @@ just run
 # to exit qemu: Ctr+A Z 
 ```
 
-If you are targeting a specific dev board, you will need to adjust the linker script and board-specific bring-up to match its memory map and peripherals.
+The current code keeps device details behind `arch/platform/*.h` so the UART,
+timer, and interrupt code can be retargeted later without rewriting the kernel
+core. A real board port will still need its own linker script and early startup.
 
 ## Configuration
 You can override the default architecture settings via CMake cache variables:

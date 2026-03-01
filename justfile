@@ -2,7 +2,7 @@ alias r := run
 
 [default]
 build:
-    @cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+    @cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBOARD=qemu-virt
     @cmake --build build
 
 # remove the build directory

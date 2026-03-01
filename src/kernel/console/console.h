@@ -17,5 +17,7 @@ void console_init(void);
 void console_register(struct console *con);
 void console_putc(char c);
 void console_puts(const char *s);
+void console_rx(char c);
+int console_getc_nonblock(char *out);
 
 #endif // CONSOLE_H

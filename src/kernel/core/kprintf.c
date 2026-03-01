@@ -11,9 +11,9 @@
 static char digits[] = "0123456789abcdef";
 
 /**
- * @brief Prints an integer 'xx' in base 'base' interpreted as 
+ * @brief Prints an integer 'xx' in base 'base' interpreted as
  *        signed if 'sign' is 1 and as unsigned if it is 0.
- * 
+ *
  * @param xx Integer to print
  * @param base Base of the integer
  * @param sign Boolean telling if the integer is signed
@@ -33,7 +33,7 @@ static void printint(int xx, int base, int sign) {
 
         do {
                 buf[i++] = digits[x % base];
-        } while((x /= base) != 0);
+        } while ((x /= base) != 0);
 
         if (sign) {
                 buf[i++] = '-';
@@ -42,27 +42,25 @@ static void printint(int xx, int base, int sign) {
         while (--i >= 0) {
                 console_putc(buf[i]);
         }
-
 }
 
 /**
  * @brief Output string to console and update scrren buffer
- * 
+ *
  * @param str Format string
  * @param ... Arguments for the format string
- * 
+ *
  * WARNING: For the moment the only implemented formats are:
- * 
+ *
  *          - %d and %i
- * 
+ *
  *          - %u
- * 
+ *
  *          - %x
- * 
+ *
  *          - %%
  */
 int kprintf(const char *str, ...) {
-        __attribute__((format(printf, 1, 2)));
         va_list ptr;
         va_start(ptr, str);
 
@@ -74,26 +72,22 @@ int kprintf(const char *str, ...) {
 
                 char next_ch = str[++i];
                 switch (next_ch) {
-                        case '%':
-                                console_putc('%');
-                                break;
-                        case 'd':
-                        case 'i':
-                                printint(va_arg(ptr, int), 10, 1);
-                                break;
-                        case 'u':
-                                printint(va_arg(ptr, int), 10, 1);
-                                break;
-                        case 'x':
-                                printint(va_arg(ptr, int), 16, 0);
-                                break;
-                                
+                case '%':
+                        console_putc('%');
+                        break;
+                case 'd':
+                case 'i':
+                        printint(va_arg(ptr, int), 10, 1);
+                        break;
+                case 'u':
+                        printint(va_arg(ptr, int), 10, 1);
+                        break;
+                case 'x':
+                        printint(va_arg(ptr, int), 16, 0);
+                        break;
+                default:
+                        break;
                 }
         }
         return 0;
-}
-
-/* kprint_newline - Advance to next line in screen buffer */
-static void kprint_newline(void) {
-        console_putc('\n');
 }

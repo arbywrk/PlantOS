@@ -2,13 +2,16 @@
  * kmain.c - Kernel entry point after early boot handoff.
  */
 
-#include "../console/console.h"
-#include "../include/kernel/kernel.h"
-#include "../include/kernel/types.h"
+#include <console/console.h>
+#include <cpu/interrupt.h>
+#include <cpu/timer.h>
+#include <drivers/uart/uart.h>
+#include <kernel/kernel.h>
+#include <kernel/types.h>
 
 /* kernel_main - Main kernel function
  *
- * Called from _start (assembly) after CPU initialization.
+ * Called from _start (in start.S) after CPU initialization.
  * Sets up hardware, displays welcome message, then enters infinite loop
  * waiting for interrupts.
  *
@@ -16,7 +19,14 @@
  * Reference: RISC-V Calling Convention - caller expects sp/ra preserved
  */
 void kmain(void) {
+        uint64 last_reported_tick = 0;
+
         console_init();
+        interrupt_controller_init();
+        timer_init(100);
+        uart_irq_init();
+        interrupt_global_enable();
+
         kprintf("  /$$$$$$$  /$$                       /$$      /$$$$$$          \n");
         kprintf("| $$__  $$| $$                      | $$     /$$__  $$          \n");
         kprintf("| $$  \\ $$| $$  /$$$$$$  /$$$$$$$  /$$$$$$  | $$  \\ $$  /$$$$$$$\n");
@@ -27,14 +37,17 @@ void kmain(void) {
         kprintf("|__/      |__/ \\_______/|__/  |__/   \\___/   \\______/ |_______/\n");
 
         kprintf("Kernel booting...\n");
-        // mm_init();
-        // trap_enable();
-        // timer_init();
+        kprintf("QEMU virt machine-mode trap path enabled.\n");
+        kprintf("Timer tick: 100 Hz via CLINT. Type in the QEMU UART to exercise PLIC RX interrupts.\n");
 
-        // sched_init();
-        // sched_start(); // hands control to schedular (interrupts + schedular run the system)
+        for (;;) {
+                uint64 ticks = timer_ticks();
 
-        /* Idle loop - CPU sleeps until interrupt via wfi in halt_loop (assembly) */
-        while (1)
-                ;
+                if (ticks - last_reported_tick >= 100) {
+                        last_reported_tick = ticks;
+                        kprintf("ticks=%u\n", (uint32)ticks);
+                }
+
+                asm volatile("wfi");
+        }
 }

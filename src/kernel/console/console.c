@@ -8,6 +8,9 @@
 static struct console *active_console;
 static char screen_buffer[SCREENSIZE];
 static unsigned int current_loc = 0;
+static char rx_buffer[128];
+static volatile unsigned int rx_head = 0;
+static volatile unsigned int rx_tail = 0;
 
 void console_init(void) {
         uart_init();
@@ -38,4 +41,33 @@ void console_puts(const char *s) {
                         uart_putc('\r');
                 uart_putc(*s++);
         }
+}
+
+void console_rx(char c) {
+        unsigned int next;
+
+        if (c == '\r')
+                c = '\n';
+
+        /*
+         * The ISR is the producer and foreground code is the consumer. On this
+         * single-core kernel, fixed-width head/tail updates are sufficient for a
+         * simple teaching buffer without locking.
+         */
+        next = (rx_head + 1U) % sizeof(rx_buffer);
+        if (next != rx_tail) {
+                rx_buffer[rx_head] = c;
+                rx_head = next;
+        }
+
+        console_putc(c);
+}
+
+int console_getc_nonblock(char *out) {
+        if (rx_head == rx_tail)
+                return 0;
+
+        *out = rx_buffer[rx_tail];
+        rx_tail = (rx_tail + 1U) % sizeof(rx_buffer);
+        return 1;
 }

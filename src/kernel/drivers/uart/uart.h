@@ -6,6 +6,7 @@
 #define UART_H
 
 void uart_init(void);
+void uart_irq_init(void);
 void uart_putc(char c);
 
 struct console;

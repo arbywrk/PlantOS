@@ -7,6 +7,14 @@
 #include <kernel/types.h>
 
 void kmain();
+extern void trap_vector(void);
+extern void mtrap_vector(void);
+
+static void trap_init_early(void) {
+  write_mtvec((reg_t)mtrap_vector);
+  write_stvec((reg_t)trap_vector);
+  write_sscratch(0);
+}
 
 __attribute__((aligned(16))) char stack0[4096 * HARTS_COUNT];
 

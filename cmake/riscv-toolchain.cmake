@@ -1,31 +1,38 @@
-# riscv-toolchain.cmake - Cross-compilation toolchain definition for RISC-V targets.
-#
-# Responsibilities:
-# - tell CMake which compiler/binutils to use
-# - configure the project for cross compilation
-# - define target architecture / ABI defaults where appropriate
-
-# RISC-V 32-bit Toolchain File
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR riscv32)
-
-# Toolchain prefix
-set(PREFIX riscv32-unknown-elf-)
-
-# Compilers
-set(CMAKE_C_COMPILER ${PREFIX}gcc)
-set(CMAKE_ASM_COMPILER ${PREFIX}gcc)
-set(CMAKE_OBJCOPY ${PREFIX}objcopy)
-set(CMAKE_OBJDUMP ${PREFIX}objdump)
-set(CMAKE_SIZE ${PREFIX}size)
-
-# Don't try to run executables on the build machine
-set(CMAKE_CROSSCOMPILING TRUE)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-# Search for programs in the build host directories
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(PLANTOS_TOOLCHAIN_PREFIX "riscv32-esp-elf-" CACHE STRING "Cross-toolchain prefix")
 
-# Search for libraries and headers in the target directories
+if(NOT DEFINED CMAKE_C_COMPILER)
+    set(CMAKE_C_COMPILER "${PLANTOS_TOOLCHAIN_PREFIX}gcc")
+endif()
+
+if(NOT DEFINED CMAKE_ASM_COMPILER)
+    set(CMAKE_ASM_COMPILER "${PLANTOS_TOOLCHAIN_PREFIX}gcc")
+endif()
+
+if(NOT DEFINED CMAKE_AR)
+    set(CMAKE_AR "${PLANTOS_TOOLCHAIN_PREFIX}ar")
+endif()
+
+if(NOT DEFINED CMAKE_RANLIB)
+    set(CMAKE_RANLIB "${PLANTOS_TOOLCHAIN_PREFIX}ranlib")
+endif()
+
+if(NOT DEFINED CMAKE_OBJCOPY)
+    set(CMAKE_OBJCOPY "${PLANTOS_TOOLCHAIN_PREFIX}objcopy")
+endif()
+
+if(NOT DEFINED CMAKE_OBJDUMP)
+    set(CMAKE_OBJDUMP "${PLANTOS_TOOLCHAIN_PREFIX}objdump")
+endif()
+
+if(NOT DEFINED CMAKE_SIZE)
+    set(CMAKE_SIZE "${PLANTOS_TOOLCHAIN_PREFIX}size")
+endif()
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)

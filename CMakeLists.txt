@@ -1,76 +1,74 @@
-# CMakeLists.txt - Top-level build entry for PlantOS.
-#
-# Responsibilities:
-# - define the overall project
-# - load toolchain / configuration
-# - select the active architecture / SoC / board
-# - include subdirectories and targets
+cmake_minimum_required(VERSION 3.31)
 
-cmake_minimum_required(VERSION 3.20)
-
-# Architecture configuration
-set(ARCH "riscv32" CACHE STRING "Target architecture")
-set(BOARD "qemu-virt" CACHE STRING "Target board")
-set(ARCH_ISA "rv32imac_zicsr_zifencei" CACHE STRING "RISC-V ISA string")
-set(ARCH_ABI "ilp32" CACHE STRING "RISC-V ABI string")
-
-# Toolchain configuration
-set(PREFIX "riscv32-unknown-elf-")
-set(CMAKE_C_COMPILER "${PREFIX}gcc")
-set(CMAKE_CXX_COMPILER "${PREFIX}g++")
-set(CMAKE_ASM_COMPILER "${PREFIX}gcc")
-set(CMAKE_OBJCOPY "${PREFIX}objcopy")
-
-project(PlantOS
-        LANGUAGES C ASM
-        VERSION 0.1.0
-)
-
-# Build type handling
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(
+        CMAKE_TOOLCHAIN_FILE
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/riscv-toolchain.cmake"
+        CACHE FILEPATH
+        "Toolchain file used to cross-compile PlantOS"
+    )
 endif()
 
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+project(PlantOS VERSION 0.1.0 LANGUAGES C ASM)
 
-# Prevent CMake from adding default flags
-set(CMAKE_C_FLAGS_DEBUG "")
-set(CMAKE_C_FLAGS_RELEASE "")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "")
-set(CMAKE_C_FLAGS_MINSIZEREL "")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Common compiler flags
-set(COMMON_FLAGS
-    -march=${ARCH_ISA}
-    -mabi=${ARCH_ABI}
-    -mcmodel=medany
-    -ffreestanding
-    -fno-builtin
-    -fno-stack-protector
-    -fno-pic
-    -nostdlib
-    -Wall
-    -Wextra
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(PlantOSOptions)
+include(PlantOSBuildOptions)
+
+message(
+    STATUS
+    "PlantOS target: arch=${PLANTOS_ARCH} soc=${PLANTOS_SOC_VENDOR}/${PLANTOS_SOC} board=${PLANTOS_BOARD_VENDOR}/${PLANTOS_BOARD}"
 )
 
-# Build-type specific flags
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(MODE_FLAGS -g -O0)
-else()
-    set(MODE_FLAGS -O2)
+add_subdirectory(src)
+
+set(PLANTOS_IMAGE_ANCHOR "${CMAKE_CURRENT_BINARY_DIR}/plantos_image_anchor.c")
+file(GENERATE OUTPUT "${PLANTOS_IMAGE_ANCHOR}" CONTENT "void plantos_image_anchor(void) {}\n")
+
+add_executable(plantos_image "${PLANTOS_IMAGE_ANCHOR}")
+add_executable(PlantOS::image ALIAS plantos_image)
+
+target_link_libraries(
+    plantos_image
+    PRIVATE
+        PlantOS::project_options
+        PlantOS::board
+        PlantOS::soc
+        PlantOS::kernel
+        PlantOS::arch
+)
+
+set_target_properties(
+    plantos_image
+    PROPERTIES
+        OUTPUT_NAME "${PLANTOS_IMAGE_NAME}"
+        SUFFIX ".elf"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
+
+set(PLANTOS_MAP_FILE "${CMAKE_BINARY_DIR}/${PLANTOS_IMAGE_NAME}.map")
+set(PLANTOS_BIN_FILE "${CMAKE_BINARY_DIR}/${PLANTOS_IMAGE_NAME}.bin")
+
+target_link_options(
+    plantos_image
+    PRIVATE
+        "LINKER:-T,${PLANTOS_LINKER_SCRIPT}"
+        "LINKER:-Map,${PLANTOS_MAP_FILE}"
+        "LINKER:--gc-sections"
+)
+
+set_property(TARGET plantos_image APPEND PROPERTY LINK_DEPENDS "${PLANTOS_LINKER_SCRIPT}")
+
+if(CMAKE_OBJCOPY)
+    add_custom_command(
+        OUTPUT "${PLANTOS_BIN_FILE}"
+        COMMAND "${CMAKE_OBJCOPY}" -O binary "$<TARGET_FILE:plantos_image>" "${PLANTOS_BIN_FILE}"
+        DEPENDS plantos_image
+        VERBATIM
+    )
+
+    add_custom_target(plantos_binary ALL DEPENDS "${PLANTOS_BIN_FILE}")
 endif()
-
-# Global include directories
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src/kernel
-    ${CMAKE_SOURCE_DIR}/src/kernel/include
-    ${CMAKE_SOURCE_DIR}/src/kernel/arch/${ARCH}/include
-    ${CMAKE_SOURCE_DIR}/src/kernel/arch/${ARCH}
-    ${CMAKE_SOURCE_DIR}/src/kernel/arch/${ARCH}/boards/${BOARD}/include
-)
-
-# Build directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Add kernel subdirectory
-add_subdirectory(src/kernel)

@@ -9,11 +9,11 @@
  * Called by:
  * - platform-specific early startup after essential hardware bring-up
  */
-#include <console/console.h>
-#include <cpu/interrupt.h>
-#include <cpu/timer.h>
-#include <drivers/uart/uart.h>
-#include <kernel/kernel.h>
+#include <kernel/console.h>
+#include <kernel/irq.h>
+#include <kernel/platform.h>
+#include <kernel/printk.h>
+#include <kernel/timer.h>
 #include <kernel/types.h>
 
 /* kernel_main - Main kernel function
@@ -26,13 +26,12 @@
  * Reference: RISC-V Calling Convention - caller expects sp/ra preserved
  */
 void kmain(void) {
-        uint64 last_reported_tick = 0;
+        uint64_t last_reported_tick = 0;
 
         console_init();
-        interrupt_controller_init();
+        irq_init();
         timer_init(100);
-        uart_irq_init();
-        interrupt_global_enable();
+        irq_enable_global();
 
         kprintf("  /$$$$$$$  /$$                       /$$      /$$$$$$          \n");
         kprintf("| $$__  $$| $$                      | $$     /$$__  $$          \n");
@@ -46,13 +45,13 @@ void kmain(void) {
         kprintf("Kernel booting...\n");
 
         for (;;) {
-                uint64 ticks = timer_ticks();
+                uint64_t ticks = timer_ticks();
 
                 if (ticks - last_reported_tick >= 100) {
                         last_reported_tick = ticks;
-                        kprintf("ticks=%u\n", (uint32) ticks);
+                        kprintf("ticks=%u\n", (uint32_t) ticks);
                 }
 
-                asm volatile("wfi");
+                platform_idle();
         }
 }

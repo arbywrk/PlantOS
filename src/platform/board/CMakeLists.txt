@@ -1,0 +1,1 @@
+add_subdirectory("${PLANTOS_BOARD_VENDOR}" "${PLANTOS_BOARD_VENDOR}")

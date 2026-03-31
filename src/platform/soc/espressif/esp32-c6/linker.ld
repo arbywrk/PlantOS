@@ -1,3 +1,10 @@
+/* linker.ld - ESP32-C6 linker script for PlantOS.
+ *
+ * Responsibilities:
+ * - define the memory map used by the final image
+ * - place sections at the correct runtime addresses
+ * - export linker symbols used by startup code
+ */
 ENTRY(_start)
 
 MEMORY

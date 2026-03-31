@@ -1,4 +1,9 @@
-# Kernel build configuration for the PlantOS kernel image (RV32).
+# CMakeLists.txt - Kernel subtree build definition.
+#
+# Responsibilities:
+# - define generic kernel sources
+# - export kernel include paths
+# - participate in the final target build
 
 set(KERNEL_TARGET kernel.elf)
 

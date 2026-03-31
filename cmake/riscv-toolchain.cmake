@@ -1,3 +1,10 @@
+# riscv-toolchain.cmake - Cross-compilation toolchain definition for RISC-V targets.
+#
+# Responsibilities:
+# - tell CMake which compiler/binutils to use
+# - configure the project for cross compilation
+# - define target architecture / ABI defaults where appropriate
+
 # RISC-V 32-bit Toolchain File
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR riscv32)

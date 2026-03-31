@@ -1,7 +1,14 @@
 /*
- * kmain.c - Kernel entry point after early boot handoff.
+ * kmain.c - Generic kernel main entry after platform startup.
+ *
+ * Responsibilities:
+ * - run generic kernel initialization
+ * - use only documented kernel/arch/platform interfaces
+ * - remain mostly independent of concrete SoC/board details
+ *
+ * Called by:
+ * - platform-specific early startup after essential hardware bring-up
  */
-
 #include <console/console.h>
 #include <cpu/interrupt.h>
 #include <cpu/timer.h>

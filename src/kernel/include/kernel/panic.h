@@ -1,5 +1,8 @@
 /*
- * panic.h - Fatal kernel stop helper.
+ * panic.h - Kernel panic interface.
+ *
+ * Responsibilities:
+ * - define fatal error handling entry points
  */
 
 #ifndef PANIC_H

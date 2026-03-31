@@ -1,3 +1,10 @@
+/*
+ * types.h - Kernel-wide semantic type definitions.
+ *
+ * Responsibilities:
+ * - define shared types used across the kernel
+ * - provide semantic aliases such as address/register-sized types where needed
+ */
 #ifndef KERNEL_TYPES_H
 #define KERNEL_TYPES_H
 

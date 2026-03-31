@@ -1,3 +1,15 @@
+/*
+ * start.S - Generic RISC-V early entry point.
+ *
+ * Responsibilities:
+ * - provide the linked entry symbol `_start`
+ * - establish the initial stack
+ * - clear the `.bss` section
+ * - hand off to the first platform-specific C startup function
+ *
+ * Called by:
+ * - the platform boot chain after the image entry point is reached
+ */
 .section .entry, "ax"
 .globl _start
 .globl __stack_top

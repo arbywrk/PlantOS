@@ -1,3 +1,11 @@
+# CMakeLists.txt - Top-level build entry for PlantOS.
+#
+# Responsibilities:
+# - define the overall project
+# - load toolchain / configuration
+# - select the active architecture / SoC / board
+# - include subdirectories and targets
+
 cmake_minimum_required(VERSION 3.20)
 
 # Architecture configuration

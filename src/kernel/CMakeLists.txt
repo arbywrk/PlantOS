@@ -3,6 +3,8 @@ add_library(PlantOS::kernel ALIAS plantos_kernel)
 
 target_link_libraries(
     plantos_kernel
+    PUBLIC
+        PlantOS::arch
     PRIVATE
         PlantOS::project_options
         PlantOS::warnings
@@ -14,6 +16,7 @@ target_sources(
         init/kmain.c
         lib/kprintf.c
         lib/panic.c
+        console/console.c
     PUBLIC
         FILE_SET public_headers
         TYPE HEADERS

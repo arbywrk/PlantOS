@@ -10,13 +10,13 @@ void panic(const char *msg) {
         static const char prefix[] = "panic: ";
         static const char suffix[] = "\n";
 
-        console_write(prefix, sizeof(prefix) - 1U);
+        console_write(prefix);
         if (msg != 0) {
                 while (*msg != '\0') {
                         console_putc(*msg++);
                 }
         }
-        console_write(suffix, sizeof(suffix) - 1U);
+        console_write(suffix);
 
         for (;;) {
                 platform_idle();

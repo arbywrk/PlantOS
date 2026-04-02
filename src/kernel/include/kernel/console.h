@@ -12,8 +12,19 @@
 
 #include <stddef.h>
 
+/// Initializes the console.
 void console_init(void);
+
+/// Write the character to the console.
+/// The console must be initialized with console_init(void).
 void console_putc(char ch);
-void console_write(const char *buffer, size_t length);
+
+/// Write the buffer to the console.
+/// The console must be initialized with console_init(void).
+void console_write(const char *buff);
+
+/// Write 'n' characters of the buffer to the console.
+/// The console must be initialized with console_init(void).
+void console_writen(const char *buff, const size_t n);
 
 #endif

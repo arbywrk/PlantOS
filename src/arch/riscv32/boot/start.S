@@ -12,6 +12,7 @@
  */
 .section .entry, "ax"
 .globl _start
+.globl platform_start
 .globl __stack_top
 .globl __bss_start
 .globl __bss_end

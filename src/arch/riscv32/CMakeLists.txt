@@ -30,7 +30,6 @@ target_sources(
         TYPE HEADERS
         BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}"
         FILES
-            cpu/csr.h
             cpu/idle.h
             timer/cycle.h
             trap/trapframe.h
